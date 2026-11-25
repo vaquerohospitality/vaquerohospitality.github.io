@@ -14,55 +14,96 @@
 <link rel="apple-touch-icon" href="https://vaquerohospitality.github.io/apple-touch-icon.png">
 <link rel="icon" href="https://vaquerohospitality.github.io/apple-touch-icon.png">
 <!--
-  Vaquero Hospitality launch page. This is the page the Home Screen icon opens.
-  It is a static page on GitHub, so it cannot tell who is signed in: everyone sees every department,
-  and each app still checks its own access list when it opens (people without access get "No access").
-  Finance opens the Vaquero Finance launcher.
+  Vaquero Hospitality home page (redesign 25/11/2026, Sherif): slim header, "Waiting for you" and each person's own apps.
+  The page asks the Finance launcher (?homeToday=1, a script tag) who is signed in, what is waiting for them and which
+  apps they can open. If that answer can't be had (not signed in, or Safari on iPhone blocking it), the page shows
+  every app and no list; each app still checks its own access when it opens.
 -->
 <style>
-html,body{margin:0;min-height:100%;background:#f4f5f7;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1c2530}
+:root{--navy:#1b2a41;--clay:#c0643b;--bg:#f4f5f7;--card:#fff;--line:#e3e6ea;--ink:#1c2530;--muted:#6b7280;--bad:#b42318;--warn:#b54708;--info:#1b2a41}
+html,body{margin:0;min-height:100%;background:var(--bg);font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
 *{box-sizing:border-box}
-header{background:#1b2a41;color:#fff;text-align:center;padding:calc(30px + env(safe-area-inset-top)) 20px 26px}
-#logo{display:block;margin:0 auto;width:240px;max-width:72vw;height:auto}
-.sub{font-size:13px;letter-spacing:.32em;color:#c0643b;font-weight:600;margin-top:12px}
-#setup{display:none;max-width:420px;margin:16px auto 0;font-size:14px;line-height:1.6;color:rgba(255,255,255,.85)}
-main{padding:28px 18px calc(28px + env(safe-area-inset-bottom))}
-.apps{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;max-width:1100px;margin:0 auto}
-.app{flex:0 1 300px;display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit;background:#fff;border:1px solid #e3e6ea;border-radius:14px;padding:28px 22px;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}
-a.app:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(27,42,65,.12);border-color:#c0643b}
-a.app:active{transform:scale(.98)}
-.icon{font-size:34px;line-height:1}
-.name{margin-top:14px;font-size:17px;font-weight:700;color:#1b2a41}
-.what{flex:1;margin-top:8px;font-size:13px;color:#6b7280;line-height:1.5}
-.go{margin-top:18px;display:inline-block;background:#1b2a41;color:#fff;border-radius:8px;padding:8px 22px;font-size:13px;font-weight:600}
-a.app .go{background:#c0643b}
-.soon{opacity:.55}.soon .go{background:#9aa3ae}
-/* Splash (same as before): navy screen with the logo and spinner while the page or an app opens. */
-#splash{position:fixed;inset:0;background:#1b2a41;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;transition:opacity .35s ease}
+header{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px}
+.bar{max-width:880px;margin:0 auto;display:flex;align-items:center;gap:8px}
+#logo{display:block;width:116px;height:auto;cursor:pointer}
+.sp{flex:1}
+.pill{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;line-height:1.2}
+.pill:hover{background:rgba(255,255,255,.16)}
+#pulseBox{margin-bottom:24px}
+.phead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+#dashBtn{font-size:13px;font-weight:600;color:var(--clay);text-decoration:none}
+.ptabs{display:flex;gap:4px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px;margin:4px 0 12px;width:max-content;max-width:100%}
+.ptabs button{border:0;background:transparent;font:inherit;font-size:13px;font-weight:500;color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer}
+.ptabs button.on{background:var(--navy);color:#fff}
+.ptabs.small button{font-size:12px;padding:5px 11px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kl{font-size:13px;color:var(--muted)}.kl small{display:block;font-size:11px;color:#9aa3ae}
+.kv{font-size:26px;font-weight:600;color:var(--navy);margin:6px 0 8px;letter-spacing:-.01em}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;margin:0 4px 4px 0;background:#eef0f3;color:var(--muted)}
+.chip.g{background:#e7f4ea;color:#1f7a3d}.chip.r{background:#fdecea;color:#b42318}
+.ptable{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px}
+.pt-title{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:8px}
+.tscroll{overflow-x:auto}
+#ptab{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+#ptab th{font-weight:500;color:var(--muted);text-align:right;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+#ptab th:first-child,#ptab td:first-child{text-align:left}
+#ptab td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+#ptab tr.grp td{font-weight:600;color:var(--navy)}
+#ptab tr.sub td:first-child{color:var(--muted);padding-left:14px}
+.dg,.dr{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}.dg{background:#2e7d32}.dr{background:#b42318}
+[dir=rtl] #ptab th,[dir=rtl] #ptab td{text-align:left}[dir=rtl] #ptab th:first-child,[dir=rtl] #ptab td:first-child{text-align:right}
+.pnote{font-size:11px;color:#9aa3ae;margin:8px 0 0}
+@media (max-width:560px){.kpis{grid-template-columns:1fr 1fr}.kv{font-size:21px}}
+#themeBtn{width:32px;padding:5px 0;text-align:center}
+main{max-width:880px;margin:0 auto;padding:20px 16px calc(28px + env(safe-area-inset-bottom))}
+.hello{font-size:20px;font-weight:600;color:var(--navy);margin:2px 0 2px}
+.date{font-size:13px;color:var(--muted);margin-bottom:18px}
+h2{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 8px}
+#todayBox{margin-bottom:22px}
+.list{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;text-decoration:none;color:inherit;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+a.item:hover{background:#f8f9fb}
+.dot{flex:0 0 8px;height:8px;border-radius:50%;background:var(--info)}
+.t-bad .dot{background:var(--bad)}.t-warn .dot{background:var(--warn)}
+.area{flex:0 0 92px;font-size:12px;color:var(--muted)}
+.txt{flex:1;font-size:14px;line-height:1.4}
+.chev{color:#9aa3ae;font-size:18px;line-height:1}
+[dir=rtl] .chev{transform:scaleX(-1)}
+.empty{padding:14px;font-size:14px;color:var(--muted)}
+.ok .dot{background:#2e7d32}
+.menu{width:36px;height:34px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;color:#fff;cursor:pointer;border-radius:8px;padding:0}
+.menu:hover{background:rgba(255,255,255,.12)}
+.menu svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+#shade{position:fixed;inset:0;background:rgba(15,22,33,.45);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:8}
+#drawer{position:fixed;top:0;bottom:0;left:0;width:280px;max-width:84vw;background:var(--navy);z-index:9;transform:translateX(-102%);transition:transform .22s ease;display:flex;flex-direction:column;box-shadow:0 0 30px rgba(0,0,0,.18)}
+[dir=rtl] #drawer{left:auto;right:0;transform:translateX(102%)}
+body.open #drawer{transform:none}
+body.open #shade{opacity:1;pointer-events:auto}
+.dhead{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 16px 14px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+[dir=rtl] .dhead{letter-spacing:0}
+.apps{padding:12px;display:flex;flex-direction:column;gap:8px;overflow:auto}
+.app{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;text-decoration:none;color:#fff;font-size:14px;font-weight:600;transition:background .12s ease,border-color .12s ease}
+.app:hover{background:rgba(255,255,255,.1);border-color:var(--clay)}
+#drawer .ic{background:rgba(192,100,59,.18);color:#e8a07c}
+#drawer .note{color:rgba(255,255,255,.5)}
+.app:active{transform:scale(.98)}
+.ic{flex:0 0 34px;height:34px;border-radius:9px;background:#f6ece6;color:var(--clay);display:flex;align-items:center;justify-content:center}
+.ic svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.app.off{display:none}
+.note{margin:4px 16px 16px;font-size:12px;color:#9aa3ae}
+#setup{display:none;font-size:13px;color:var(--muted);margin-bottom:14px}
+@media (max-width:560px){.area{flex-basis:70px}.hello{font-size:18px}}
+/* Splash: navy screen with the logo and spinner while the page or an app opens. */
+#splash{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;transition:opacity .35s ease}
 #splash.hide{opacity:0;pointer-events:none}
-#splash .spin{width:26px;height:26px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#c0643b;animation:r .9s linear infinite;margin-top:34px}
+#splash .sub{font-size:11px;letter-spacing:.32em;color:var(--clay);font-weight:600}
+#splash .spin{width:26px;height:26px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:var(--clay);animation:r .9s linear infinite;margin-top:34px}
 @keyframes r{to{transform:rotate(360deg)}}
-.note{max-width:700px;margin:22px auto 0;text-align:center;font-size:12px;color:#9aa3ae}
-@media (max-width:640px){main{padding:18px 14px}.app{flex:1 1 100%;padding:22px 18px}}
-/* Greeting, date and language switch (24/10/2026) */
-header{position:relative}
-.lang{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:5px 14px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
-[dir=rtl] .lang{right:auto;left:14px}
-.hello{margin-top:16px;font-size:16px;font-weight:600;color:#fff}
-.today{margin-top:3px;font-size:13px;color:rgba(255,255,255,.72)}
 [dir=rtl] body{font-family:"Segoe UI",Tahoma,Arial,sans-serif}
-[dir=rtl] .sub{letter-spacing:0}
-/* One light/dark button for all Vaquero apps (25/10/2026): sits opposite the language button */
-.theme-btn{right:auto;left:14px;width:34px;padding:5px 0;text-align:center}
-[dir=rtl] .theme-btn{left:auto;right:14px}
-/* Compact header (24/10/2026): greeting and date on one small line, smaller logo, clear of the iPhone camera */
-header{padding:calc(max(env(safe-area-inset-top), 50px) + 22px) 20px 14px}
-#logo{width:180px;max-width:52vw}
-.sub{font-size:11px;margin-top:8px}
-.hello{margin-top:6px;font-size:12px;font-weight:500;color:rgba(255,255,255,.7)}
-.today{display:none}
-.lang{padding:4px 12px;font-size:12px}
-/* Dark mode: the shared theme.css does the work; keep the navy splash navy */
+[dir=rtl] h2,[dir=rtl] #splash .sub{letter-spacing:0}
+/* Dark mode: the shared theme.css inverts the page; keep the navy parts navy */
 @media (prefers-color-scheme: dark){html:not([data-theme=light]) #splash{filter:invert(1) hue-rotate(180deg)}}
 html[data-theme=dark] #splash{filter:invert(1) hue-rotate(180deg)}
 </style>
@@ -71,153 +112,206 @@ html[data-theme=dark] #splash{filter:invert(1) hue-rotate(180deg)}
 <body>
 <div id="splash"><img alt="Vaquero Hospitality" src="data:image/webp;base64,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" style="width:240px;max-width:72vw;height:auto"><div class="sub" id="splashSub">VAQUERO</div><div class="spin"></div></div>
 <header>
-  <img id="logo" alt="Vaquero Hospitality" src="data:image/webp;base64,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">
-  <button class="lang theme-btn" id="themeBtn" type="button" title="Light / dark mode">&#9790;</button>
-  <button class="lang" id="langBtn" type="button">عربي</button>
-  <div class="sub" id="deptSub">DEPARTMENTS</div>
-  <div class="hello" id="hello"></div>
-  <div class="today" id="today"></div>
-  <div id="setup">To install: tap the Share button, then <b>Add to Home Screen</b>.</div>
+  <div class="bar">
+    <button class="menu" id="menuBtn" type="button" aria-label="Apps" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <img id="logo" alt="Vaquero Hospitality" src="data:image/webp;base64,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">
+    <div class="sp"></div>
+    <button class="pill" id="langBtn" type="button">عربي</button>
+    <button class="pill" id="themeBtn" type="button" title="Light / dark mode">&#9790;</button>
+  </div>
 </header>
 <main>
-  <div class="apps">
-    <a class="app" href="https://vaquero-finance.vercel.app/"><div class="icon">&#128202;</div><div class="name">Finance</div><div class="what">Cash Flow, Cheques, House Fund, Bank, approvals, ledger and reports.</div><div class="go">Open</div></a>
-    <a class="app" href="https://vaquero-finance.vercel.app/payables"><div class="icon">&#128196;</div><div class="name">Payables</div><div class="what">Submit, approve and follow up payment requests for your department.</div><div class="go">Open</div></a>
-    <!-- VQ Requisition tile hidden for now (25/11/2026): <a class="app" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyBjS1T4DVpwCTf_AeadeLtpzvmNftfuzE1lJTFxYCGvYNvZn-yUowvbjVTtONbHS9bbw/exec?brand=vq"><div class="icon">&#128722;</div><div class="name">VQ Requisition</div><div class="what">Order from the Good Nature store and follow each request until it arrives.</div><div class="go">Open</div></a> -->
-    <a class="app" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbzqcG-eWqujIspm5GmioYJsZeT1HZxIczesx-5KgU16a6MtxvsyLmuJJNyvCkmLJxYnmw/exec"><div class="icon">&#127860;</div><div class="name">Operations / F&amp;B</div><div class="what">Outlet operations.</div><div class="go">Open</div></a>
-    <a class="app" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwMT_bp6ebYDigePmKhzKfl1l8eV8YDSrpTaoO-0z1Cze7MlHHgEo2SNMoxkkETEyXJ/exec"><div class="icon">&#128230;</div><div class="name">Cost Control</div><div class="what">Food and beverage cost per outlet and month, stock count and reconciliation.</div><div class="go">Open</div></a>
-    <a class="app" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyl10AoSStupr2-eU3n433lk7Vh-79jWqhu5OdQlZBw47W48wrlJFxKyaMEwppe4_mV/exec"><div class="icon">&#128101;</div><div class="name">HR</div><div class="what">Employees, monthly payroll per outlet, advances and loans, payslips.</div><div class="go">Open</div></a>
-    <a class="app" id="chichaCairo" href="https://vaquerohospitality.github.io/chicha-cairo.html"><div class="icon">&#127959;&#65039;</div><div class="name">Chicha Cairo</div><div class="what">Opening budget, payment tracking and the 12-month P&amp;L for Chicha Cairo (5A).</div><div class="go">Open</div></a>
-  </div>
-  <p class="note">Sign in with your vaquerohospitality.com account. Each app only opens for the people who have access to it.</p>
+  <div id="setup">To install: tap the Share button, then <b>Add to Home Screen</b>.</div>
+  <div class="hello" id="hello"></div>
+  <div class="date" id="date"></div>
+
+  <section id="pulseBox" hidden>
+    <div class="phead"><h2 data-i18n="Performance">Performance</h2><a id="dashBtn" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycby9TGkPD_kZx_uQoZhSF_El_5JeTXL5a1I_uRaZYuBtiU2L1tW3RVRZiy0gx4GWudDs0w/exec"><span data-i18n="Full dashboard">Full dashboard</span> &#8250;</a></div>
+    <div class="ptabs" id="outTabs"></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="ptable">
+      <div class="pt-title" data-i18n="Where each outlet stands: 2025, 2026 and budget">Where each outlet stands: 2025, 2026 and budget</div>
+      <div class="ptabs small" id="metTabs"></div>
+      <div class="tscroll"><table id="ptab"></table></div>
+      <p class="pnote" id="pnote"></p>
+    </div>
+  </section>
+
+  <section id="todayBox" hidden>
+    <h2 data-i18n="Waiting for you">Waiting for you</h2>
+    <div class="list" id="todayList"><div class="empty" data-i18n="Checking…">Checking…</div></div>
+  </section>
+
 </main>
+<div id="shade"></div>
+<nav id="drawer" aria-label="Your apps">
+  <div class="dhead"><span data-i18n="Your apps">Your apps</span><button class="menu" id="closeBtn" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="apps" id="apps">
+    <a class="app" data-app="finance" href="https://vaquero-finance.vercel.app/"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="name">Finance</span></a>
+    <a class="app" data-app="payables" href="https://vaquero-finance.vercel.app/payables"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span class="name">Payables</span></a>
+    <a class="app" data-app="operations" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbzqcG-eWqujIspm5GmioYJsZeT1HZxIczesx-5KgU16a6MtxvsyLmuJJNyvCkmLJxYnmw/exec"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 3v8a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M9 13v8M17 3c-1.7 1.3-2.5 3.3-2.5 6s.8 4 2.5 4v8"/></svg></span><span class="name">Operations / F&amp;B</span></a>
+    <a class="app" data-app="cost" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwMT_bp6ebYDigePmKhzKfl1l8eV8YDSrpTaoO-0z1Cze7MlHHgEo2SNMoxkkETEyXJ/exec"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10"/></svg></span><span class="name">Cost Control</span></a>
+    <a class="app" data-app="hr" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyl10AoSStupr2-eU3n433lk7Vh-79jWqhu5OdQlZBw47W48wrlJFxKyaMEwppe4_mV/exec"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></span><span class="name">HR</span></a>
+    <a class="app" data-app="chicha5a" href="https://vaquerohospitality.github.io/chicha-cairo.html"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-5 8 5v12M9 21v-6h6v6M2 21h20"/></svg></span><span class="name">Chicha Cairo</span></a>
+  </div>
+  <p class="note" data-i18n="Each app only opens for the people who have access to it.">Each app only opens for the people who have access to it.</p>
+</nav>
 <script>
+var FIN = 'https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyNguFiwHdv_XV56bg1_Ams780Rfdwc7xq0ld-AcIx7HueNrtm5TVBsJmX_yuxg9fcNrA/exec';
+var CEO = 'https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycby9TGkPD_kZx_uQoZhSF_El_5JeTXL5a1I_uRaZYuBtiU2L1tW3RVRZiy0gx4GWudDs0w/exec';
 /* ?setup=1 in Safari (not from the Home Screen): show how to add the icon. */
 var homeScreen = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
 if (/[?&]setup=1/.test(location.search) && !homeScreen) document.getElementById('setup').style.display = 'block';
-/* Show the splash briefly, then the departments. */
 var splash = document.getElementById('splash');
-setTimeout(function () { splash.classList.add('hide'); }, 700);
-/* Open apps right here, like the old icon did: a plain link from the Home Screen app opens a separate
-   browser window on iPhone, so the page itself navigates instead, behind the splash. */
-Array.prototype.forEach.call(document.querySelectorAll('a.app'), function (a) {
-  a.addEventListener('click', function (e) {
-    e.preventDefault();
-    document.getElementById('splashSub').textContent = a.querySelector('.name').textContent.toUpperCase();
-    splash.classList.remove('hide');
-    location.href = a.href + (a.href.indexOf('?') < 0 ? '?' : '&') + 'theme=' + (vqTheme() || 'auto');
-  });
-});
-/* Light / dark: this button decides for every Vaquero app. Each app is opened with ?theme=...
-   and keeps the choice (see theme.js), so apps opened later directly follow it too. */
+setTimeout(function () { splash.classList.add('hide'); }, 600);
 function vqTheme() { try { return localStorage.getItem('vqTheme') || ''; } catch (e) { return ''; } }
+/* Open an app right here behind the splash (a plain link opens a separate window from the iPhone Home Screen app). */
+function go(href, label, theme) {
+  document.getElementById('splashSub').textContent = String(label || 'VAQUERO').toUpperCase();
+  splash.classList.remove('hide');
+  location.href = theme ? href + (href.indexOf('?') < 0 ? '?' : '&') + 'theme=' + (vqTheme() || 'auto') : href;
+}
+document.getElementById('apps').addEventListener('click', function (e) {
+  var a = e.target.closest('a.app'); if (!a) return; e.preventDefault(); go(a.href, a.querySelector('.name').textContent, true);
+});
+/* Apps menu: the button opens the side panel; the shade, the close button and Escape close it. */
+function menu(open) { document.body.classList.toggle('open', open); document.getElementById('menuBtn').setAttribute('aria-expanded', open ? 'true' : 'false'); }
+document.getElementById('menuBtn').addEventListener('click', function () { menu(!document.body.classList.contains('open')); });
+document.getElementById('closeBtn').addEventListener('click', function () { menu(false); });
+document.getElementById('shade').addEventListener('click', function () { menu(false); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') menu(false); });
+document.getElementById('dashBtn').addEventListener('click', function (e) { e.preventDefault(); go(CEO, 'Dashboard', false); });
+/* Performance (admins only: Sherif, Omar, Fareed): the Vaquero Hospitality Dashboard's Pulse, YTD vs 2025 and budget.
+   The figures come from the Finance launcher for the signed-in admin; nothing is stored in this public page. */
+var P = null, pOut = 'Group', pMet = 'revenue';
+var OUTS = ['Chicha', 'Luma', 'Riah', 'Barten', 'Char', 'Group'];
+var KPIS = [
+  { k: 'revenue', l: 'Revenue', s: "as in Finance's P&L", up: true },
+  { k: 'ebitda', l: 'EBITDA', s: '', up: true },
+  { k: 'margin', l: 'EBITDA margin', s: '', up: true },
+  { k: 'fb', l: 'F&B cost', s: '', up: false },
+  { k: 'pay', l: 'Payroll', s: 'incl. Head Office', up: false },
+  { k: 'payx', l: 'Payroll', s: 'excl. Head Office', up: false }];
+var METS = [['revenue', 'Revenue'], ['ebitda', 'EBITDA'], ['margin', 'EBITDA margin'], ['fb', 'F&B cost %'], ['pay', 'Payroll incl. HO %'], ['payx', 'Payroll excl. HO %']];
+var ROWS = [['Group', 'grp'], ['Vaquero (VQC)', 'grp'], ['Chicha', 'sub'], ['Luma', 'sub'], ['Riah', 'sub'], ['Umami', 'grp'], ['Barten', 'sub'], ['Char', 'sub']];
+function fM(v, sign) { if (v == null) return '—'; var a = Math.abs(v) / 1e6; return (v < 0 ? '−' : sign ? '+' : '') + a.toFixed(2) + 'M'; }
+function fP(v) { return v == null ? '—' : (v * 100).toFixed(1) + '%'; }
+function fSP(v) { return v == null ? '—' : (v < 0 ? '−' : '+') + Math.abs(v * 100).toFixed(1) + '%'; }
+function fPts(v) { return v == null ? '—' : (v < 0 ? '−' : '+') + Math.abs(v).toFixed(1) + ' pts'; }
+function isMoney(k) { return k === 'revenue' || k === 'ebitda'; }
+function val(k, v) { return isMoney(k) ? fM(v) : fP(v); }
+function dLy(k, x) { return k === 'revenue' ? fSP(x.vsLy) : k === 'ebitda' ? fM(x.vsLy, true) : fPts(x.vsLy); }
+function dB(k, x) { return k === 'revenue' ? fSP(x.vsB) : k === 'ebitda' ? fM(x.vsB, true) : fPts(x.vsB); }
+function tone(v, up) { return v == null ? '' : (v >= 0) === up ? 'g' : 'r'; }
+function chip(text, t) { return '<span class="chip ' + t + '">' + esc(text) + '</span>'; }
+function drawPulse() {
+  if (!P) return;
+  var ar = getLang() === 'ar';
+  document.getElementById('outTabs').innerHTML = OUTS.map(function (o) { return '<button type="button" data-o="' + o + '" class="' + (o === pOut ? 'on' : '') + '">' + esc(tr(o)) + '</button>'; }).join('');
+  var g = P.groups[pOut] || {};
+  document.getElementById('kpis').innerHTML = KPIS.map(function (c) {
+    var x = g[c.k] || {};
+    var ly = x.vsLy == null ? chip(tr('no 2025 base'), '') : chip(dLy(c.k, x) + ' ' + tr('vs 2025'), tone(x.vsLy, c.up));
+    return '<div class="kpi"><div class="kl">' + esc(tr(c.l)) + (c.s ? '<small>' + esc(tr(c.s)) + '</small>' : '') + '</div><div class="kv">' + val(c.k, x.a) + '</div>' + ly + chip(dB(c.k, x) + ' ' + tr('vs budget'), tone(x.vsB, c.up)) + '</div>';
+  }).join('');
+  document.getElementById('metTabs').innerHTML = METS.map(function (m) { return '<button type="button" data-m="' + m[0] + '" class="' + (m[0] === pMet ? 'on' : '') + '">' + esc(tr(m[1])) + '</button>'; }).join('');
+  var up = KPIS.filter(function (c) { return c.k === pMet; })[0].up;
+  var head = '<tr><th></th><th>' + esc(tr(isMoney(pMet) ? (METS.filter(function (m) { return m[0] === pMet; })[0][1] + ' 2025') : '2025')) + '</th><th>' + esc(tr('2026 actual')) + '</th><th>' + esc(tr('2026 budget')) + '</th><th>' + esc(tr('vs 2025')) + '</th><th>' + esc(tr('vs budget')) + '</th></tr>';
+  var body = ROWS.map(function (r) {
+    var x = (P.groups[r[0]] || {})[pMet] || {}, gg = P.groups[r[0]] || {};
+    var dot = function (v) { var t = tone(v, up); return t ? '<i class="d' + t + '"></i>' : ''; };
+    return '<tr class="' + r[1] + '"><td>' + (r[1] === 'sub' ? '· ' : '') + esc(tr(r[0])) + '</td><td>' + val(pMet, x.ly) + '</td><td>' + val(pMet, x.a) + '</td><td>' + val(pMet, x.b) + '</td><td>' + (x.vsLy == null ? '—' : dot(x.vsLy) + dLy(pMet, x) + (gg.lfl ? ' *' : '')) + '</td><td>' + dot(x.vsB) + dB(pMet, x) + '</td></tr>';
+  }).join('');
+  document.getElementById('ptab').innerHTML = '<thead>' + head + '</thead><tbody>' + body + '</tbody>';
+  document.getElementById('pnote').textContent = tr(P.asOf) + ' · ' + tr('* vs 2025 like-for-like: Riah has no 2025 base and is left out on both sides.');
+}
+function renderPulse(p) {
+  var box = document.getElementById('pulseBox');
+  if (!p || !p.groups) { box.hidden = true; P = null; return; }
+  P = p; box.hidden = false; drawPulse();
+}
+document.getElementById('outTabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; pOut = b.getAttribute('data-o'); drawPulse(); });
+document.getElementById('metTabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; pMet = b.getAttribute('data-m'); drawPulse(); });
+/* Light / dark: this button decides for every Vaquero app (each app is opened with ?theme=..., see theme.js). */
 function vqDark() { var t = vqTheme(); return t ? t === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); }
 function vqIcon() { document.getElementById('themeBtn').innerHTML = vqDark() ? '&#9728;' : '&#9790;'; }
 vqIcon();
 document.getElementById('themeBtn').addEventListener('click', function () {
   var next = vqDark() ? 'light' : 'dark';
   try { localStorage.setItem('vqTheme', next); } catch (e) {}
-  document.documentElement.setAttribute('data-theme', next);
-  vqIcon();
+  document.documentElement.setAttribute('data-theme', next); vqIcon();
 });
-/* Greeting, today's date (Cairo time) and English / Arabic switch. */
+/* English / Arabic */
 var AR = {
-  'DEPARTMENTS': 'الأقسام', 'Open': 'فتح', 'Coming soon': 'قريباً',
-  'Finance': 'المالية', 'Operations / F&B': 'التشغيل / الأغذية والمشروبات', 'Cost Control': 'مراقبة التكاليف', 'HR': 'الموارد البشرية', 'Marketing': 'التسويق', 'Payables': 'المدفوعات',
-  'Submit, approve and follow up payment requests for your department.': 'تقديم طلبات الدفع لقسمك والموافقة عليها ومتابعتها.',
-  'Cash Flow, Cheques Tracker, House Fund, P&Ls, Catering and the finance dashboard.': 'التدفق النقدي، متابعة الشيكات، العهدة، الأرباح والخسائر، الكيترينج ولوحة المؤشرات المالية.',
-  'Outlet operations.': 'تشغيل الفروع.', 'VQ Requisition': 'طلبات المخزن', 'Order from the Good Nature store and follow each request until it arrives.': 'اطلب من مخزن Good Nature وتابع كل طلب لحد ما يوصل.',
-  'Food and beverage cost per outlet and month, stock count and reconciliation.': 'تكلفة الأغذية والمشروبات لكل فرع وشهر، الجرد والمطابقة.',
-  'Employees, monthly payroll per outlet, advances and loans, payslips.': 'الموظفون، الرواتب الشهرية لكل فرع، السلف والقروض، كشوف المرتبات.',
-  'Menus, price updates, designs and campaigns.': 'القوائم، تحديث الأسعار، التصميمات والحملات.',
-  'Chicha Cairo': 'تشيتشا القاهرة', 'P&L': 'الأرباح والخسائر', 'Opening budget': 'ميزانية الافتتاح', 'Tracking': 'المتابعة',
-  'Opening budget, payment tracking and the 12-month P&L for Chicha Cairo (5A).': 'ميزانية الافتتاح ومتابعة المدفوعات وتوقعات الأرباح والخسائر لـ 12 شهراً لتشيتشا القاهرة (5A).',
-  'Sign in with your vaquerohospitality.com account. Each app only opens for the people who have access to it.': 'سجّل الدخول بحساب vaquerohospitality.com. كل تطبيق يفتح فقط لمن لديه صلاحية.'
+  'Waiting for you': 'في انتظارك', 'Your apps': 'تطبيقاتك', 'Checking…': 'جارٍ التحقق…', 'Nothing waiting for you.': 'لا يوجد شيء في انتظارك.',
+  'Dashboard': 'لوحة المؤشرات', 'Vaquero Hospitality Dashboard': 'لوحة مؤشرات فاكيرو', 'Scorecard for the whole group': 'مؤشرات الأداء للمجموعة كلها', 'Finance': 'المالية', 'Payables': 'المدفوعات', 'Operations / F&B': 'التشغيل / الأغذية والمشروبات',
+  'Cost Control': 'مراقبة التكاليف', 'HR': 'الموارد البشرية', 'Chicha Cairo': 'تشيتشا القاهرة', 'Bank': 'البنك',
+  'Each app only opens for the people who have access to it.': 'كل تطبيق يفتح فقط لمن لديه صلاحية.',
+  'more': 'أخرى', 'Performance': 'الأداء', 'Full dashboard': 'اللوحة الكاملة', 'Group': 'المجموعة', 'Luma': 'لوما', 'Riah': 'رياح', 'Barten': 'بارتن', 'Char': 'تشار', 'Chicha': 'تشيتشا',
+  'Vaquero (VQC)': 'فاكيرو (VQC)', 'Umami': 'أومامي', 'Revenue': 'الإيرادات', 'EBITDA': 'EBITDA', 'EBITDA margin': 'هامش EBITDA', 'F&B cost': 'تكلفة الأغذية والمشروبات',
+  'Payroll': 'الرواتب', 'incl. Head Office': 'شاملة الإدارة', 'excl. Head Office': 'بدون الإدارة', "as in Finance's P&L": 'كما في أرباح وخسائر المالية',
+  'vs 2025': 'مقابل 2025', 'vs budget': 'مقابل الميزانية', 'no 2025 base': 'لا يوجد أساس 2025', '2026 actual': 'فعلي 2026', '2026 budget': 'ميزانية 2026',
+  'F&B cost %': 'تكلفة الأغذية %', 'Payroll incl. HO %': 'الرواتب شاملة الإدارة %', 'Payroll excl. HO %': 'الرواتب بدون الإدارة %', 'Revenue 2025': 'إيرادات 2025', 'EBITDA 2025': 'EBITDA 2025',
+  'Where each outlet stands: 2025, 2026 and budget': 'موقف كل فرع: 2025 و2026 والميزانية'
 };
-var i18nEls = document.querySelectorAll('.app .name, .app .what, .app .go, #deptSub, .note');
-Array.prototype.forEach.call(i18nEls, function (el) { el.setAttribute('data-en', el.textContent); });
 function getLang() { try { return localStorage.getItem('vqLang') || 'en'; } catch (e) { return 'en'; } }
-function applyLang(lang) {
-  var ar = lang === 'ar';
-  document.documentElement.lang = ar ? 'ar' : 'en';
-  document.documentElement.dir = ar ? 'rtl' : 'ltr';
-  Array.prototype.forEach.call(i18nEls, function (el) { var en = el.getAttribute('data-en'); el.textContent = ar ? (AR[en] || en) : en; });
+function tr(s) { return getLang() === 'ar' ? (AR[s] || s) : s; }
+var i18nEls = document.querySelectorAll('[data-i18n], .app .name');
+Array.prototype.forEach.call(i18nEls, function (el) { if (!el.getAttribute('data-i18n')) el.setAttribute('data-i18n', el.textContent); });
+var me = null;   // the launcher's answer
+function applyLang() {
+  var ar = getLang() === 'ar';
+  document.documentElement.lang = ar ? 'ar' : 'en'; document.documentElement.dir = ar ? 'rtl' : 'ltr';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { el.textContent = tr(el.getAttribute('data-i18n')); });
   document.getElementById('langBtn').textContent = ar ? 'English' : 'عربي';
   var now = new Date();
   var h = Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Africa/Cairo' }).format(now));
-  var greet = ar ? (h >= 5 && h < 12 ? 'صباح الخير' : 'مساء الخير')
-    : (h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 17 ? 'Good afternoon' : 'Good evening');
-  var day = now.toLocaleDateString(ar ? 'ar-EG' : 'en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Africa/Cairo' });
-  document.getElementById('hello').textContent = greet + ' · ' + day;
+  var greet = ar ? (h >= 5 && h < 12 ? 'صباح الخير' : 'مساء الخير') : (h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 17 ? 'Good afternoon' : 'Good evening');
+  var first = me && me.name ? String(me.name).split(' ')[0] : '';
+  document.getElementById('hello').textContent = greet + (first ? (ar ? ' يا ' : ', ') + first : '');
+  document.getElementById('date').textContent = now.toLocaleDateString(ar ? 'ar-EG' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Africa/Cairo' });
 }
-applyLang(getLang());
 document.getElementById('langBtn').addEventListener('click', function () {
-  var next = getLang() === 'ar' ? 'en' : 'ar';
-  try { localStorage.setItem('vqLang', next); } catch (e) {}
-  applyLang(next);
+  try { localStorage.setItem('vqLang', getLang() === 'ar' ? 'en' : 'ar'); } catch (e) {}
+  applyLang(); if (me) render(me);
 });
-/* Fast, offline-ready opening: the page and icons are kept on the phone (sw.js) and refreshed in the background. */
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
-/* Coming back with the Back gesture: hide the splash again (and refresh the greeting). */
-window.addEventListener('pageshow', function () { applyLang(getLang()); });
-window.addEventListener('pageshow', function () { setTimeout(function () { splash.classList.add('hide'); }, 300); });
-</script>
-<script>
-/* CEO dashboard card (28/10/2026): only for Sherif, Omar and Fareed. The Finance app tells this page whether the
-   signed-in Google account is one of them. The card shows only when the answer is yes; a no (or a different account
-   signed in) removes it again. The dashboard itself checks access again, so nobody else can open it. */
+/* Each person's own view, from the Finance launcher. The last answer is kept on this device so the page opens
+   straight into it; a fresh answer replaces it a moment later. */
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function render(d) {
+  me = d;
+  renderPulse(d.pulse);
+  if (d.apps && d.apps.length) Array.prototype.forEach.call(document.querySelectorAll('.app'), function (a) { a.classList.toggle('off', d.apps.indexOf(a.getAttribute('data-app')) < 0); });
+  var box = document.getElementById('todayBox'), list = document.getElementById('todayList');
+  box.hidden = false;
+  var items = d.items || [];
+  list.innerHTML = items.length ? items.map(function (x) {
+    return '<a class="item t-' + esc(x.tone) + '" href="' + esc(x.url) + '"><span class="dot"></span><span class="area">' + esc(tr(x.area)) + '</span><span class="txt">' + esc(x.text) + '</span><span class="chev">&#8250;</span></a>';
+  }).join('') + (d.more ? '<div class="empty">+' + d.more + ' ' + tr('more') + '</div>' : '')
+    : '<div class="item ok"><span class="dot"></span><span class="txt">' + esc(tr('Nothing waiting for you.')) + '</span></div>';
+  applyLang();
+}
+document.getElementById('todayList').addEventListener('click', function (e) { var a = e.target.closest('a.item'); if (!a) return; e.preventDefault(); go(a.href, a.querySelector('.area').textContent, true); });
+try { var saved = JSON.parse(localStorage.getItem('vqHome') || 'null'); if (saved && saved.ok) render(saved); } catch (e) {}
+applyLang();
+window.vqToday = function (d) {
+  if (!d || !d.ok) return;
+  try { localStorage.setItem('vqHome', JSON.stringify(d)); localStorage.setItem('vqCeo', d.admin ? '1' : '0'); } catch (e) {}
+  render(d);
+};
+(function () { var s = document.createElement('script'); s.async = true; s.src = FIN + '?homeToday=1&cb=vqToday&t=' + Date.now(); document.body.appendChild(s); })();
+/* Press and hold the logo: opens the dashboard (admins; anyone else gets "No access" there). */
 (function () {
-  var FIN = 'https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyNguFiwHdv_XV56bg1_Ams780Rfdwc7xq0ld-AcIx7HueNrtm5TVBsJmX_yuxg9fcNrA/exec';
-  var CEO = 'https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycby9TGkPD_kZx_uQoZhSF_El_5JeTXL5a1I_uRaZYuBtiU2L1tW3RVRZiy0gx4GWudDs0w/exec';   // 25/11/2026: Vaquero Hospitality Dashboard (scorecard web app)
-  var TXT = { en: ['CEO Dashboard', 'Sales, profit, cash, costs and catering for all outlets at a glance.', 'Open'],
-              ar: ['لوحة الرئيس التنفيذي', 'المبيعات والأرباح والنقدية والتكاليف والكيترينج لكل الفروع في صفحة واحدة.', 'فتح'] };
-  function remembered() { try { return localStorage.getItem('vqCeo') === '1'; } catch (e) { return false; } }
-  function remember(on) { try { localStorage.setItem('vqCeo', on ? '1' : '0'); } catch (e) {} }
-  function label() {
-    var a = document.getElementById('ceoCard'); if (!a) return;
-    var t = TXT[getLang() === 'ar' ? 'ar' : 'en'];
-    a.querySelector('.name').textContent = t[0]; a.querySelector('.what').textContent = t[1]; a.querySelector('.go').textContent = t[2];
-  }
-  function show() {
-    if (document.getElementById('ceoCard')) return;
-    var a = document.createElement('a');
-    a.className = 'app'; a.id = 'ceoCard'; a.href = CEO;
-    a.innerHTML = '<div class="icon">📈</div><div class="name"></div><div class="what"></div><div class="go"></div>';
-    var apps = document.querySelector('.apps'); apps.insertBefore(a, apps.firstChild);
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      document.getElementById('splashSub').textContent = a.querySelector('.name').textContent.toUpperCase();
-      splash.classList.remove('hide');
-      location.href = a.href;
-    });
-    label();
-  }
-  document.getElementById('langBtn').addEventListener('click', label);
-  // Coming back from the CEO dashboard (only the three of them can open it): remember on this device, so the tile also
-  // shows on iPhones, where Safari blocks the background check below.
-  if (/[?&]ceo=ok\b/.test(location.search)) { remember(true); try { history.replaceState(null, '', location.pathname); } catch (e) {} }
-  // 25/11/2026 (Sherif): CEO Dashboard card back on the page, for admins only (Sherif, Omar, Fareed): the Finance app
-  // answers whether the signed-in account is one of them; the card shows on a yes and is removed on a no.
-  if (remembered()) show();
-  function hide() { var a = document.getElementById('ceoCard'); if (a) a.parentNode.removeChild(a); }
-  window.vqCeoCheck = function (ok) { if (ok === true) { remember(true); show(); } else if (ok === false) { remember(false); hide(); } };
-  var s = document.createElement('script'); s.async = true; s.src = FIN + '?ceoCheck=1&cb=vqCeoCheck';
-  document.body.appendChild(s);
-  // iPhone Home Screen app (29/10/2026): it keeps its own storage, separate from Safari, and the background check above
-  // can't run there. Press and hold the Vaquero logo for a second to open the CEO dashboard (anyone else gets "No access");
-  // tapping the logo inside the dashboard brings you back here and the CEO card then stays on this phone.
   var logo = document.getElementById('logo'), hold = null;
-  if (logo) {
-    logo.style.webkitTouchCallout = 'none'; logo.style.webkitUserSelect = 'none'; logo.setAttribute('draggable', 'false');
-    var start = function () { clearTimeout(hold); hold = setTimeout(function () {
-      document.getElementById('splashSub').textContent = TXT[getLang() === 'ar' ? 'ar' : 'en'][0].toUpperCase();
-      splash.classList.remove('hide'); location.href = CEO; }, 900); }; // 22/11/2026 (Sherif): CEO view = Vaquero Hospitality Dashboard (scorecard web app; was the claude.ai artifact)
-    var stop = function () { clearTimeout(hold); };
-    logo.addEventListener('touchstart', start, { passive: true }); logo.addEventListener('mousedown', start);
-    ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(function (ev) { logo.addEventListener(ev, stop); });
-    logo.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-  }
+  logo.style.webkitTouchCallout = 'none'; logo.style.webkitUserSelect = 'none'; logo.setAttribute('draggable', 'false');
+  var start = function () { clearTimeout(hold); hold = setTimeout(function () { go(CEO, 'Dashboard', false); }, 900); };
+  var stop = function () { clearTimeout(hold); };
+  logo.addEventListener('touchstart', start, { passive: true }); logo.addEventListener('mousedown', start);
+  ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(function (ev) { logo.addEventListener(ev, stop); });
+  logo.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 })();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+window.addEventListener('pageshow', function () { menu(false); applyLang(); setTimeout(function () { splash.classList.add('hide'); }, 300); });
 </script>
 <!-- Vaquero Assistant chat button (29/10/2026) -->
 <script src="https://vaquerohospitality.github.io/assistant.js" data-app="Home" defer></script>
