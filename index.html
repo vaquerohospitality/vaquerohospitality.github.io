@@ -168,6 +168,7 @@ window.addEventListener('pageshow', function () { setTimeout(function () { splas
    signed in) removes it again. The dashboard itself checks access again, so nobody else can open it. */
 (function () {
   var FIN = 'https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyNguFiwHdv_XV56bg1_Ams780Rfdwc7xq0ld-AcIx7HueNrtm5TVBsJmX_yuxg9fcNrA/exec';
+  var CEO = 'https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycby9TGkPD_kZx_uQoZhSF_El_5JeTXL5a1I_uRaZYuBtiU2L1tW3RVRZiy0gx4GWudDs0w/exec';   // 25/11/2026: Vaquero Hospitality Dashboard (scorecard web app)
   var TXT = { en: ['CEO Dashboard', 'Sales, profit, cash, costs and catering for all outlets at a glance.', 'Open'],
               ar: ['لوحة الرئيس التنفيذي', 'المبيعات والأرباح والنقدية والتكاليف والكيترينج لكل الفروع في صفحة واحدة.', 'فتح'] };
   function remembered() { try { return localStorage.getItem('vqCeo') === '1'; } catch (e) { return false; } }
@@ -180,14 +181,14 @@ window.addEventListener('pageshow', function () { setTimeout(function () { splas
   function show() {
     if (document.getElementById('ceoCard')) return;
     var a = document.createElement('a');
-    a.className = 'app'; a.id = 'ceoCard'; a.href = FIN + '?page=ceo';
+    a.className = 'app'; a.id = 'ceoCard'; a.href = CEO;
     a.innerHTML = '<div class="icon">📈</div><div class="name"></div><div class="what"></div><div class="go"></div>';
     var apps = document.querySelector('.apps'); apps.insertBefore(a, apps.firstChild);
     a.addEventListener('click', function (e) {
       e.preventDefault();
       document.getElementById('splashSub').textContent = a.querySelector('.name').textContent.toUpperCase();
       splash.classList.remove('hide');
-      location.href = a.href + '&theme=' + (vqTheme() || 'auto');
+      location.href = a.href;
     });
     label();
   }
@@ -195,9 +196,13 @@ window.addEventListener('pageshow', function () { setTimeout(function () { splas
   // Coming back from the CEO dashboard (only the three of them can open it): remember on this device, so the tile also
   // shows on iPhones, where Safari blocks the background check below.
   if (/[?&]ceo=ok\b/.test(location.search)) { remember(true); try { history.replaceState(null, '', location.pathname); } catch (e) {} }
-  // 29/10/2026 (Sherif): no CEO card on this page any more, on phone or computer. The CEO dashboard opens only by
-  // pressing and holding the Vaquero logo (below); the dashboard itself still lets in only Sherif, Omar and Fareed.
+  // 25/11/2026 (Sherif): CEO Dashboard card back on the page, for admins only (Sherif, Omar, Fareed): the Finance app
+  // answers whether the signed-in account is one of them; the card shows on a yes and is removed on a no.
+  if (remembered()) show();
   function hide() { var a = document.getElementById('ceoCard'); if (a) a.parentNode.removeChild(a); }
+  window.vqCeoCheck = function (ok) { if (ok === true) { remember(true); show(); } else if (ok === false) { remember(false); hide(); } };
+  var s = document.createElement('script'); s.async = true; s.src = FIN + '?ceoCheck=1&cb=vqCeoCheck';
+  document.body.appendChild(s);
   // iPhone Home Screen app (29/10/2026): it keeps its own storage, separate from Safari, and the background check above
   // can't run there. Press and hold the Vaquero logo for a second to open the CEO dashboard (anyone else gets "No access");
   // tapping the logo inside the dashboard brings you back here and the CEO card then stays on this phone.
@@ -206,7 +211,7 @@ window.addEventListener('pageshow', function () { setTimeout(function () { splas
     logo.style.webkitTouchCallout = 'none'; logo.style.webkitUserSelect = 'none'; logo.setAttribute('draggable', 'false');
     var start = function () { clearTimeout(hold); hold = setTimeout(function () {
       document.getElementById('splashSub').textContent = TXT[getLang() === 'ar' ? 'ar' : 'en'][0].toUpperCase();
-      splash.classList.remove('hide'); location.href = 'https://claude.ai/artifact/EkBjUpPYSnTmtxXJsPCsML'; }, 900); }; // 17/11/2026 (Sherif): CEO view = Fareed's scorecard
+      splash.classList.remove('hide'); location.href = CEO; }, 900); }; // 22/11/2026 (Sherif): CEO view = Vaquero Hospitality Dashboard (scorecard web app; was the claude.ai artifact)
     var stop = function () { clearTimeout(hold); };
     logo.addEventListener('touchstart', start, { passive: true }); logo.addEventListener('mousedown', start);
     ['touchend', 'touchmove', 'touchcancel', 'mouseup', 'mouseleave'].forEach(function (ev) { logo.addEventListener(ev, stop); });
