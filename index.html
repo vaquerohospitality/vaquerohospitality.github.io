@@ -65,10 +65,6 @@ header{padding:calc(max(env(safe-area-inset-top), 50px) + 22px) 20px 14px}
 /* Dark mode: the shared theme.css does the work; keep the navy splash navy */
 @media (prefers-color-scheme: dark){html:not([data-theme=light]) #splash{filter:invert(1) hue-rotate(180deg)}}
 html[data-theme=dark] #splash{filter:invert(1) hue-rotate(180deg)}
-/* Chicha Cairo tile (24/11/2026): one card, three sheet links */
-.links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px}
-.links .go{margin-top:0;background:#c0643b;color:#fff;text-decoration:none}
-.links .go:hover{background:#1b2a41}
 </style>
 <link rel="stylesheet" href="https://vaquerohospitality.github.io/theme.css">
 </head>
@@ -91,7 +87,7 @@ html[data-theme=dark] #splash{filter:invert(1) hue-rotate(180deg)}
     <a class="app" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbzqcG-eWqujIspm5GmioYJsZeT1HZxIczesx-5KgU16a6MtxvsyLmuJJNyvCkmLJxYnmw/exec"><div class="icon">&#127860;</div><div class="name">Operations / F&amp;B</div><div class="what">Outlet operations.</div><div class="go">Open</div></a>
     <a class="app" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwMT_bp6ebYDigePmKhzKfl1l8eV8YDSrpTaoO-0z1Cze7MlHHgEo2SNMoxkkETEyXJ/exec"><div class="icon">&#128230;</div><div class="name">Cost Control</div><div class="what">Food and beverage cost per outlet and month, stock count and reconciliation.</div><div class="go">Open</div></a>
     <a class="app" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyl10AoSStupr2-eU3n433lk7Vh-79jWqhu5OdQlZBw47W48wrlJFxKyaMEwppe4_mV/exec"><div class="icon">&#128101;</div><div class="name">HR</div><div class="what">Employees, monthly payroll per outlet, advances and loans, payslips.</div><div class="go">Open</div></a>
-    <div class="app" id="chichaCairo"><div class="icon">&#127959;&#65039;</div><div class="name">Chicha Cairo</div><div class="what">Opening budget, payment tracking and the 12-month P&amp;L for Chicha Cairo (5A).</div><div class="links"><a class="go" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1iguuz6RGYluFEIdXIDFwRUNdp2Fo8gFun4n4VuNpczw/edit">P&amp;L</a><a class="go" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1XHLj0QUR9PZteAyVm6q_QRJco8mfDtp9DHyAZ5B2Kp0/edit">Opening budget</a><a class="go" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1zrUoen6l3pnzZDKxWdso-ujbp9cEwoQ8fVUvM6P_qB0/edit">Tracking</a></div></div>
+    <a class="app" id="chichaCairo" href="https://vaquerohospitality.github.io/chicha-cairo.html"><div class="icon">&#127959;&#65039;</div><div class="name">Chicha Cairo</div><div class="what">Opening budget, payment tracking and the 12-month P&amp;L for Chicha Cairo (5A).</div><div class="go">Open</div></a>
   </div>
   <p class="note">Sign in with your vaquerohospitality.com account. Each app only opens for the people who have access to it.</p>
 </main>
