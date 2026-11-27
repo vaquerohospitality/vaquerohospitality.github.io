@@ -24,7 +24,8 @@
 html,body{margin:0;min-height:100%;background:var(--bg);font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink)}
 *{box-sizing:border-box}
 header{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px}
-.bar{display:flex;align-items:center;gap:8px}
+.bar{display:flex;align-items:center;gap:8px;position:relative}
+#logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 #logo{display:block;width:116px;height:auto;cursor:pointer}
 .sp{flex:1}
 .pill{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;line-height:1.2}
@@ -89,8 +90,8 @@ body.open #shade{opacity:1;pointer-events:auto}
 #drawer .ic{background:rgba(192,100,59,.18);color:#e8a07c}
 .app.grp{cursor:pointer}.gchev{margin-left:auto;transition:transform .15s ease;opacity:.7}[dir=rtl] .gchev{margin-left:0;margin-right:auto}
 .app.grp.open .gchev{transform:rotate(90deg)}
-.sub{display:none;flex-direction:column;gap:6px;padding-left:22px}[dir=rtl] .sub{padding-left:0;padding-right:22px}
-.sub.open{display:flex}.sub.off{display:none!important}
+.plsub{display:none;flex-direction:column;gap:6px;padding-left:22px}[dir=rtl] .plsub{padding-left:0;padding-right:22px}
+.plsub.open{display:flex}.plsub.off{display:none!important}
 .app.subapp{padding:9px 12px;font-size:13px;font-weight:500}
 #drawer .note{color:rgba(255,255,255,.5)}
 .app:active{transform:scale(.98)}
@@ -158,7 +159,7 @@ html[data-theme=dark] #splash{filter:invert(1) hue-rotate(180deg)}
     <a class="app" data-app="cost" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwMT_bp6ebYDigePmKhzKfl1l8eV8YDSrpTaoO-0z1Cze7MlHHgEo2SNMoxkkETEyXJ/exec"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10"/></svg></span><span class="name">Cost Control</span></a>
     <a class="app" data-app="hr" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyl10AoSStupr2-eU3n433lk7Vh-79jWqhu5OdQlZBw47W48wrlJFxKyaMEwppe4_mV/exec"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></span><span class="name">HR</span></a>
     <div class="app grp" data-app="pl" role="button" tabindex="0" aria-expanded="false"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 9h16M9 9v11"/></svg></span><span class="name">P&amp;Ls</span><span class="gchev">&#8250;</span></div>
-    <div class="sub" id="plSub" data-app="pl">
+    <div class="plsub" id="plSub" data-app="pl">
       <a class="app subapp" data-app="pl" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwkSO0ELkXU3DTvneKDOalVXDFfIOtXzB3Pl5f_d421Y4Y0OZC_LItw1dXcT2TaJYG_mg/exec"><span class="name">Outlet P&amp;Ls</span></a>
       <a class="app subapp" data-app="pl" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbzXQgivMuDoaxqsingv_8p3wx0agNxTwsY_ElMd2XchDj6fHZEgdr9knxNkcIhHcr3j/exec"><span class="name">Catering P&amp;L</span></a>
     </div>
