@@ -87,6 +87,11 @@ body.open #shade{opacity:1;pointer-events:auto}
 .app{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;text-decoration:none;color:#fff;font-size:14px;font-weight:600;transition:background .12s ease,border-color .12s ease}
 .app:hover{background:rgba(255,255,255,.1);border-color:var(--clay)}
 #drawer .ic{background:rgba(192,100,59,.18);color:#e8a07c}
+.app.grp{cursor:pointer}.gchev{margin-left:auto;transition:transform .15s ease;opacity:.7}[dir=rtl] .gchev{margin-left:0;margin-right:auto}
+.app.grp.open .gchev{transform:rotate(90deg)}
+.sub{display:none;flex-direction:column;gap:6px;padding-left:22px}[dir=rtl] .sub{padding-left:0;padding-right:22px}
+.sub.open{display:flex}.sub.off{display:none!important}
+.app.subapp{padding:9px 12px;font-size:13px;font-weight:500}
 #drawer .note{color:rgba(255,255,255,.5)}
 .app:active{transform:scale(.98)}
 .ic{flex:0 0 34px;height:34px;border-radius:9px;background:#f6ece6;color:var(--clay);display:flex;align-items:center;justify-content:center}
@@ -152,6 +157,11 @@ html[data-theme=dark] #splash{filter:invert(1) hue-rotate(180deg)}
     <a class="app" data-app="operations" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbzqcG-eWqujIspm5GmioYJsZeT1HZxIczesx-5KgU16a6MtxvsyLmuJJNyvCkmLJxYnmw/exec"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 3v8a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M9 13v8M17 3c-1.7 1.3-2.5 3.3-2.5 6s.8 4 2.5 4v8"/></svg></span><span class="name">Operations / F&amp;B</span></a>
     <a class="app" data-app="cost" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwMT_bp6ebYDigePmKhzKfl1l8eV8YDSrpTaoO-0z1Cze7MlHHgEo2SNMoxkkETEyXJ/exec"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10"/></svg></span><span class="name">Cost Control</span></a>
     <a class="app" data-app="hr" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbyl10AoSStupr2-eU3n433lk7Vh-79jWqhu5OdQlZBw47W48wrlJFxKyaMEwppe4_mV/exec"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></span><span class="name">HR</span></a>
+    <div class="app grp" data-app="pl" role="button" tabindex="0" aria-expanded="false"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 9h16M9 9v11"/></svg></span><span class="name">P&amp;Ls</span><span class="gchev">&#8250;</span></div>
+    <div class="sub" id="plSub" data-app="pl">
+      <a class="app subapp" data-app="pl" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwkSO0ELkXU3DTvneKDOalVXDFfIOtXzB3Pl5f_d421Y4Y0OZC_LItw1dXcT2TaJYG_mg/exec"><span class="name">Outlet P&amp;Ls</span></a>
+      <a class="app subapp" data-app="pl" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbzXQgivMuDoaxqsingv_8p3wx0agNxTwsY_ElMd2XchDj6fHZEgdr9knxNkcIhHcr3j/exec"><span class="name">Catering P&amp;L</span></a>
+    </div>
     <a class="app" data-app="chicha5a" href="https://script.google.com/a/macros/vaquerohospitality.com/s/AKfycbwVd06YP8G4q1gwA8avpgdVaXWnQsasS7L9hhZ5YTut500zQUTxCIDkbQQyXF0r7Ud5Vw/exec"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 21V9l8-5 8 5v12M9 21v-6h6v6M2 21h20"/></svg></span><span class="name">Chicha Cairo</span></a>
   </div>
   <p class="note" data-i18n="Each app only opens for the people who have access to it.">Each app only opens for the people who have access to it.</p>
@@ -171,6 +181,12 @@ function go(href, label, theme) {
   splash.classList.remove('hide');
   location.href = theme ? href + (href.indexOf('?') < 0 ? '?' : '&') + 'theme=' + (vqTheme() || 'auto') : href;
 }
+(function () {
+  var g = document.querySelector('.app.grp'), sub = document.getElementById('plSub');
+  if (!g || !sub) return;
+  var t = function () { var o = !sub.classList.contains('open'); sub.classList.toggle('open', o); g.classList.toggle('open', o); g.setAttribute('aria-expanded', o ? 'true' : 'false'); };
+  g.addEventListener('click', t); g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t(); } });
+})();
 document.getElementById('apps').addEventListener('click', function (e) {
   var a = e.target.closest('a.app'); if (!a) return; e.preventDefault(); go(a.href, a.querySelector('.name').textContent, true);
 });
@@ -245,7 +261,7 @@ document.getElementById('themeBtn').addEventListener('click', function () {
 var AR = {
   'Waiting for you': 'في انتظارك', 'Your apps': 'تطبيقاتك', 'Checking…': 'جارٍ التحقق…', 'Nothing waiting for you.': 'لا يوجد شيء في انتظارك.',
   'Dashboard': 'لوحة المؤشرات', 'Vaquero Hospitality Dashboard': 'لوحة مؤشرات فاكيرو', 'Scorecard for the whole group': 'مؤشرات الأداء للمجموعة كلها', 'Finance': 'المالية', 'Payables': 'المدفوعات', 'Operations / F&B': 'التشغيل / الأغذية والمشروبات',
-  'Cost Control': 'مراقبة التكاليف', 'HR': 'الموارد البشرية', 'Chicha Cairo': 'تشيتشا القاهرة', 'Bank': 'البنك',
+  'Cost Control': 'مراقبة التكاليف', 'P&Ls': 'الأرباح والخسائر', 'Outlet P&Ls': 'أرباح وخسائر الفروع', 'Catering P&L': 'أرباح وخسائر الكيترينج', 'HR': 'الموارد البشرية', 'Chicha Cairo': 'تشيتشا القاهرة', 'Bank': 'البنك',
   'Each app only opens for the people who have access to it.': 'كل تطبيق يفتح فقط لمن لديه صلاحية.',
   'more': 'أخرى', 'Performance': 'الأداء', 'Full dashboard': 'اللوحة الكاملة', 'Group': 'المجموعة', 'Luma': 'لوما', 'Riah': 'رياح', 'Barten': 'بارتن', 'Char': 'تشار', 'Chicha': 'تشيتشا',
   'Vaquero (VQC)': 'فاكيرو (VQC)', 'Umami': 'أومامي', 'Revenue': 'الإيرادات', 'EBITDA': 'EBITDA', 'EBITDA margin': 'هامش EBITDA', 'F&B cost': 'تكلفة الأغذية والمشروبات',
