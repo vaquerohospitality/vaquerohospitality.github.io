@@ -23,27 +23,62 @@
 }
 body{background:#f7f2ea}
 
-/* ---- Dark mode (25/10/2026) ----------------------------------------------
+/* ---- Dark mode: deep navy (28/11/2026) --------------------------------------
    Follows the phone/computer setting. The whole page is colour-inverted
-   (with a hue turn so the brand colours keep their tone), then the header and
-   side/bottom bars get a background written "pre-inverted" so they end up
-   dark charcoal, and the white logos are flipped back to white.
+   (with a hue turn so the brand colours keep their tone). The shared colour
+   names are set "pre-inverted", so after the inversion the page is deep navy
+   #0f1a2b, cards #16243a, lines #22344f and text #e8edf5; header and side/bottom
+   bars end up #0a1220, and the white logos are flipped back to white.
    <html data-theme="light"> or "dark" (the moon/sun button) overrides the
    phone setting. */
 @media (prefers-color-scheme: dark){
-  html:not([data-theme=light]){filter:invert(.9) hue-rotate(180deg);background:#f7f2ea}
-  html:not([data-theme=light]) :is(#mHead,.sidebar,header,.topbar,.bottom-nav){color:#2a2622 !important;background:#e6e0d6 !important;box-shadow:none !important;border-color:#d8d0c3 !important}
+  html:not([data-theme=light]){filter:invert(1) hue-rotate(180deg);background:#dce7f8;--bg:#dce7f8;--cream:#dce7f8;--card:#d0def4;--surface:#d0def4;--sec:#c5d6f0;--sunk:#c5d6f0;--grey:#c5d6f0;--line:#bdcfea;--border:#bdcfea;--grid:#bdcfea;--ink:#0e131b;--text:#0e131b;--fg:#0e131b;--ink2:#2a3442;--muted:#52637b;--mut:#52637b}
+  html:not([data-theme=light]) body{background:#dce7f8 !important}
+  html:not([data-theme=light]) :is(#mHead,.sidebar,header,.topbar,.bottom-nav){color:#0e131b !important;background:#e6eefc !important;box-shadow:none !important;border-color:#cad8ee !important}
   html:not([data-theme=light]) :is(.brand,.mobile-brand,header,.topbar) img{filter:invert(1) hue-rotate(180deg)}
-  html:not([data-theme=light]) :is(#mHead,header,.topbar) *{color:#2a2622 !important;border-color:rgba(42,38,34,.35) !important}
-  html:not([data-theme=light]) :is(.sidebar,.bottom-nav) :is(.nav button,.bn-item){color:rgba(42,38,34,.7) !important}
-  html:not([data-theme=light]) :is(.sidebar .nav button.active,.bn-item.active){background:rgba(42,38,34,.14) !important;color:#2a2622 !important}
+  html:not([data-theme=light]) :is(#mHead,header,.topbar) *{color:#0e131b !important;border-color:rgba(14,19,27,.3) !important}
+  html:not([data-theme=light]) :is(.sidebar,.bottom-nav) :is(.nav button,.bn-item){color:rgba(14,19,27,.7) !important}
+  html:not([data-theme=light]) :is(.sidebar .nav button.active,.bn-item.active){background:#c1d2f2 !important;color:#0e131b !important}
+  /* Boxes some apps paint plain white (they would turn black): navy cards instead. Scoped to each app by an element only it has. */
+  :where(html:not([data-theme=light]):has(#bnav)) :is(.svtabs button,input,select,textarea){background-color:#d0def4} /* Chicha 5A */
+  :where(html:not([data-theme=light]):has(#vM)) :is(nav,.seg,.btn,.kpi,table,tr,#combohint,.dr,.cm,.cpf .sbtn,.cpf .del){background-color:#d0def4} /* Catering P&L */
+  :where(html:not([data-theme=light]):has(#vM)) :is(.ev:hover td,.Info,.cpf h4,.cpf .imp,.cpf .it th){background-color:#c5d6f0} /* Catering P&L */
+  :where(html:not([data-theme=light]):has(#refreshBtn)) :is(.seg){background-color:#d0def4} /* Cost Control */
+  :where(html:not([data-theme=light]):has(#hr-home)) :is(.sidebar-select,#hr-home .hh-app,#vqMoreSheet){background-color:#d0def4} /* HR */
+  :where(html:not([data-theme=light]):has(#hr-home)) :is(thead th,.tbl-wrap::-webkit-scrollbar-track){background-color:#c5d6f0} /* HR */
+  :where(html:not([data-theme=light]):has(#range)) :is(nav,select,input[type=date],.seg button){background-color:#d0def4} /* Operations */
+  :where(html:not([data-theme=light]):has(#dw)) :is(.bvaw,.rs button.on,.seg,.pick button,.combo,select.msel,tr,.audit .item,.dw,.chips button,input.rsi,.cmt.rep,tr.sec,.more-menu,.vbtn){background-color:#d0def4} /* Outlet P&Ls */
+  :where(html:not([data-theme=light]):has(#dw)) :is(.wrap::-webkit-scrollbar-track,td.ytd,tr.sub td){background-color:#c5d6f0} /* Outlet P&Ls */
+  /* Operations keeps its own copy of the old dark header and tab bar: navy them too. */
+  html:not([data-theme=light]):has(#range) :is(header,nav){background:#e6eefc !important}
+  html:not([data-theme=light]):has(#range) nav button{color:rgba(14,19,27,.7) !important}
+  html:not([data-theme=light]):has(#range) nav button.on{background:#c1d2f2 !important;color:#0e131b !important}
+  html:not([data-theme=light]):has(#range) .who{color:rgba(14,19,27,.7) !important}
+  html:not([data-theme=light]):has(#range) header .ttl{color:#0e131b !important}
 }
-html[data-theme=dark]{filter:invert(.9) hue-rotate(180deg);background:#f7f2ea}
-html[data-theme=dark] :is(#mHead,.sidebar,header,.topbar,.bottom-nav){color:#2a2622 !important;background:#e6e0d6 !important;box-shadow:none !important;border-color:#d8d0c3 !important}
+html[data-theme=dark]{filter:invert(1) hue-rotate(180deg);background:#dce7f8;--bg:#dce7f8;--cream:#dce7f8;--card:#d0def4;--surface:#d0def4;--sec:#c5d6f0;--sunk:#c5d6f0;--grey:#c5d6f0;--line:#bdcfea;--border:#bdcfea;--grid:#bdcfea;--ink:#0e131b;--text:#0e131b;--fg:#0e131b;--ink2:#2a3442;--muted:#52637b;--mut:#52637b}
+html[data-theme=dark] body{background:#dce7f8 !important}
+html[data-theme=dark] :is(#mHead,.sidebar,header,.topbar,.bottom-nav){color:#0e131b !important;background:#e6eefc !important;box-shadow:none !important;border-color:#cad8ee !important}
 html[data-theme=dark] :is(.brand,.mobile-brand,header,.topbar) img{filter:invert(1) hue-rotate(180deg)}
-html[data-theme=dark] :is(#mHead,header,.topbar) *{color:#2a2622 !important;border-color:rgba(42,38,34,.35) !important}
-html[data-theme=dark] :is(.sidebar,.bottom-nav) :is(.nav button,.bn-item){color:rgba(42,38,34,.7) !important}
-html[data-theme=dark] :is(.sidebar .nav button.active,.bn-item.active){background:rgba(42,38,34,.14) !important;color:#2a2622 !important}
+html[data-theme=dark] :is(#mHead,header,.topbar) *{color:#0e131b !important;border-color:rgba(14,19,27,.3) !important}
+html[data-theme=dark] :is(.sidebar,.bottom-nav) :is(.nav button,.bn-item){color:rgba(14,19,27,.7) !important}
+html[data-theme=dark] :is(.sidebar .nav button.active,.bn-item.active){background:#c1d2f2 !important;color:#0e131b !important}
+/* Boxes some apps paint plain white (they would turn black): navy cards instead. Scoped to each app by an element only it has. */
+:where(html[data-theme=dark]:has(#bnav)) :is(.svtabs button,input,select,textarea){background-color:#d0def4} /* Chicha 5A */
+:where(html[data-theme=dark]:has(#vM)) :is(nav,.seg,.btn,.kpi,table,tr,#combohint,.dr,.cm,.cpf .sbtn,.cpf .del){background-color:#d0def4} /* Catering P&L */
+:where(html[data-theme=dark]:has(#vM)) :is(.ev:hover td,.Info,.cpf h4,.cpf .imp,.cpf .it th){background-color:#c5d6f0} /* Catering P&L */
+:where(html[data-theme=dark]:has(#refreshBtn)) :is(.seg){background-color:#d0def4} /* Cost Control */
+:where(html[data-theme=dark]:has(#hr-home)) :is(.sidebar-select,#hr-home .hh-app,#vqMoreSheet){background-color:#d0def4} /* HR */
+:where(html[data-theme=dark]:has(#hr-home)) :is(thead th,.tbl-wrap::-webkit-scrollbar-track){background-color:#c5d6f0} /* HR */
+:where(html[data-theme=dark]:has(#range)) :is(nav,select,input[type=date],.seg button){background-color:#d0def4} /* Operations */
+:where(html[data-theme=dark]:has(#dw)) :is(.bvaw,.rs button.on,.seg,.pick button,.combo,select.msel,tr,.audit .item,.dw,.chips button,input.rsi,.cmt.rep,tr.sec,.more-menu,.vbtn){background-color:#d0def4} /* Outlet P&Ls */
+:where(html[data-theme=dark]:has(#dw)) :is(.wrap::-webkit-scrollbar-track,td.ytd,tr.sub td){background-color:#c5d6f0} /* Outlet P&Ls */
+/* Operations keeps its own copy of the old dark header and tab bar: navy them too. */
+html[data-theme=dark]:has(#range) :is(header,nav){background:#e6eefc !important}
+html[data-theme=dark]:has(#range) nav button{color:rgba(14,19,27,.7) !important}
+html[data-theme=dark]:has(#range) nav button.on{background:#c1d2f2 !important;color:#0e131b !important}
+html[data-theme=dark]:has(#range) .who{color:rgba(14,19,27,.7) !important}
+html[data-theme=dark]:has(#range) header .ttl{color:#0e131b !important}
 
 /* ---- Outlet logos all white in dark mode (Sherif, 25/10/2026) ----------------
    Chicha, Luma, Riah, Barten and Char logos turn into a plain silhouette, which the
@@ -55,9 +90,9 @@ html[data-theme=dark] :is(.sidebar .nav button.active,.bn-item.active){backgroun
 html[data-theme=dark] :is(img[alt="Chicha" i],img[alt="Luma" i],img[alt="Riah" i],img[alt="Barten" i],img[alt="Char" i],img[alt="Olive & Grain" i],img[src*="eqja9MnTqbEKIsyGogRqORBwD49ttvOwcHByMAYK"],img[src*="fm5uZSJI25B1B7lNafUqKmnIcJDKL294CI4HK5MC"],img[src*="RdtSPXvt2ZtBDG/xNP90NECwtBV+3I75sFCeLMdf"],img[src*="ukl+joaN5kMrFC9uxZmCcCAC/vL19gn/P3uihBAg"],img[src*="stCgoKZPh59fl8qh9Qe4C8Xq8AIHw+HwMwuvhx0u"]){filter:brightness(0) !important}
 /* P&L: the outlet header band behind those logos goes dark too, so the white logos show. */
 @media (prefers-color-scheme: dark){
-  html:not([data-theme=light]) thead:has(img.thl) th{background:#e6e0d6 !important;color:#2a2622 !important}
+  html:not([data-theme=light]) thead:has(img.thl) th{background:#e6eefc !important;color:#0e131b !important}
 }
-html[data-theme=dark] thead:has(img.thl) th{background:#e6e0d6 !important;color:#2a2622 !important}
+html[data-theme=dark] thead:has(img.thl) th{background:#e6eefc !important;color:#0e131b !important}
 /* The Cash Flow copy of the Olive & Grain logo has a white background, so it goes black-and-white instead
    (shown as white artwork on dark after the page inversion). */
 @media (prefers-color-scheme: dark){
